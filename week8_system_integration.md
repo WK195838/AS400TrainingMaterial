@@ -659,4 +659,49 @@
            
            SET WS-EMP-IDX UP BY 1.
            MOVE 'E00003' TO WS-EMP-ID(WS-EMP-IDX).
-           MOVE '王建國' TO WS-EMP-NAME(WS-EMP-
+           MOVE '王建國' TO WS-EMP-NAME(WS-EMP-IDX).
+           MOVE 'FN01' TO WS-EMP-DEPT(WS-EMP-IDX).
+           MOVE 72000.00 TO WS-EMP-SALARY(WS-EMP-IDX).
+           MOVE 'A' TO WS-EMP-STATUS(WS-EMP-IDX).
+           MOVE WS-CURRENT-TIME TO WS-EMP-LAST-ACCESS(WS-EMP-IDX).
+           ADD 1 TO WS-RECORD-COUNT.
+
+       ACCESS-CACHED-DATA.
+           DISPLAY 'Accessing Employee Data from User Space...'.
+           MOVE 1 TO WS-EMP-IDX.
+           PERFORM UNTIL WS-EMP-IDX > WS-RECORD-COUNT
+               DISPLAY '員工編號: ' WS-EMP-ID(WS-EMP-IDX)
+               DISPLAY '姓名: ' WS-EMP-NAME(WS-EMP-IDX)
+               DISPLAY '部門: ' WS-EMP-DEPT(WS-EMP-IDX)
+               DISPLAY '薪資: ' WS-EMP-SALARY(WS-EMP-IDX)
+               DISPLAY '狀態: ' WS-EMP-STATUS(WS-EMP-IDX)
+               DISPLAY '最近存取: ' WS-EMP-LAST-ACCESS(WS-EMP-IDX)
+               DISPLAY '-----------------------------'
+               ADD 1 TO WS-EMP-IDX
+           END-PERFORM.
+
+       UPDATE-CACHE-STATUS.
+           MOVE FUNCTION CURRENT-DATE TO WS-CURRENT-TIME.
+           MOVE WS-CURRENT-TIME TO WS-LAST-UPDATE.
+           MOVE 'UPDATED' TO WS-CACHE-STATUS.
+           DISPLAY 'User Space cache status updated.'
+
+---
+
+## 📝 本週小結
+
+- 本週學習了企業級系統架構、三層式與微服務架構在AS/400的應用。
+- 熟悉了AS/400的程式間通訊（IPC）技術，包括資料佇列、鍵值資料佇列與使用者空間。
+- 掌握了資料佇列的建立、訊息傳遞、搜尋與高優先級處理技巧。
+- 學會了使用者空間的建立、資料快取與多程式共享應用。
+- 透過實例練習，能夠設計跨系統整合與高效資料交換機制。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL程式，模擬兩個程式透過資料佇列進行訊息交換。
+2. 修改鍵值資料佇列範例，實作訂單狀態查詢與更新功能。
+3. 嘗試設計一個使用者空間快取，支援動態新增、查詢與刪除員工資料。
+
+---

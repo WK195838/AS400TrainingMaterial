@@ -624,4 +624,89 @@ AS/400 螢幕程式系統架構：
            MOVE EMP-NAME OF EMPLOYEE-RECORD TO EMPNAME OF MAINTSCR.
            MOVE EMP-DEPT OF EMPLOYEE-RECORD TO DEPTCODE OF MAINTSCR.
            MOVE EMP-POSITION OF EMPLOYEE-RECORD TO POSITION OF MAINTSCR.
-           
+           MOVE EMP-SALARY OF EMPLOYEE-RECORD TO SALARY OF MAINTSCR.
+           MOVE EMP-HIRE-DATE OF EMPLOYEE-RECORD TO HIREDATE OF MAINTSCR.
+           MOVE EMP-STATUS OF EMPLOYEE-RECORD TO STATUS OF MAINTSCR.
+           MOVE EMP-EMAIL OF EMPLOYEE-RECORD TO EMAIL OF MAINTSCR.
+           MOVE EMP-PHONE OF EMPLOYEE-RECORD TO PHONE OF MAINTSCR.
+           MOVE EMP-SUPERVISOR OF EMPLOYEE-RECORD TO SUPERVISOR OF MAINTSCR.
+           MOVE EMP-CREATED-BY OF EMPLOYEE-RECORD TO CREATEDBY OF MAINTSCR.
+           MOVE EMP-CREATED-TS OF EMPLOYEE-RECORD TO CREATEDTS OF MAINTSCR.
+           MOVE EMP-UPDATED-BY OF EMPLOYEE-RECORD TO UPDATEDBY OF MAINTSCR.
+           MOVE EMP-UPDATED-TS OF EMPLOYEE-RECORD TO UPDATEDTS OF MAINTSCR.
+
+       PROCESS-UPDATE.
+           IF RECORD-FOUND
+               PERFORM VALIDATE-INPUT-FIELDS
+               IF WS-MESSAGE-TEXT = SPACES
+                   PERFORM UPDATE-EMPLOYEE-RECORD
+               ELSE
+                   PERFORM DISPLAY-MESSAGE
+               END-IF
+           ELSE
+               MOVE '請先查詢欲修改的員工資料' TO WS-MESSAGE-TEXT
+               PERFORM DISPLAY-MESSAGE
+           END-IF.
+
+       UPDATE-EMPLOYEE-RECORD.
+           MOVE EMPNAME OF MAINTSCR TO EMP-NAME OF EMPLOYEE-RECORD.
+           MOVE DEPTCODE OF MAINTSCR TO EMP-DEPT OF EMPLOYEE-RECORD.
+           MOVE POSITION OF MAINTSCR TO EMP-POSITION OF EMPLOYEE-RECORD.
+           MOVE SALARY OF MAINTSCR TO EMP-SALARY OF EMPLOYEE-RECORD.
+           MOVE HIREDATE OF MAINTSCR TO EMP-HIRE-DATE OF EMPLOYEE-RECORD.
+           MOVE STATUS OF MAINTSCR TO EMP-STATUS OF EMPLOYEE-RECORD.
+           MOVE EMAIL OF MAINTSCR TO EMP-EMAIL OF EMPLOYEE-RECORD.
+           MOVE PHONE OF MAINTSCR TO EMP-PHONE OF EMPLOYEE-RECORD.
+           MOVE SUPERVISOR OF MAINTSCR TO EMP-SUPERVISOR OF EMPLOYEE-RECORD.
+           MOVE WS-CURRENT-USER TO EMP-UPDATED-BY OF EMPLOYEE-RECORD.
+           MOVE FUNCTION CURRENT-DATE TO EMP-UPDATED-TS OF EMPLOYEE-RECORD.
+           REWRITE EMPLOYEE-RECORD.
+           MOVE '員工資料已成功更新' TO WS-MESSAGE-TEXT.
+           PERFORM DISPLAY-MESSAGE.
+
+       VALIDATE-INPUT-FIELDS.
+           MOVE SPACES TO WS-MESSAGE-TEXT.
+           IF EMPNAME OF MAINTSCR = SPACES
+               MOVE '姓名不可空白' TO WS-MESSAGE-TEXT
+           ELSE IF DEPTCODE OF MAINTSCR NOT = 'IT01' AND
+                   DEPTCODE OF MAINTSCR NOT = 'HR01' AND
+                   DEPTCODE OF MAINTSCR NOT = 'FN01' AND
+                   DEPTCODE OF MAINTSCR NOT = 'SL01'
+               MOVE '無效的部門代碼' TO WS-MESSAGE-TEXT
+           ELSE IF SALARY OF MAINTSCR <= 0
+               MOVE '薪資必須大於0' TO WS-MESSAGE-TEXT
+           ELSE IF HIREDATE OF MAINTSCR = SPACES
+               MOVE '到職日期不可空白' TO WS-MESSAGE-TEXT
+           END-IF.
+
+       CANCEL-OPERATION.
+           SET INQUIRY-MODE TO TRUE.
+           MOVE '操作已取消' TO WS-MESSAGE-TEXT.
+           PERFORM DISPLAY-MESSAGE.
+
+       DISPLAY-MESSAGE.
+           MOVE WS-MESSAGE-TEXT TO MSGTEXT OF MSGLINE.
+
+       TERMINATE-PROGRAM.
+           CLOSE EMPMAINTD.
+           CLOSE EMPLOYEE-FILE.
+
+---
+
+## 📝 本週小結
+
+- 本週學習了AS/400螢幕程式設計的架構、顯示檔案（DSPF）設計與DDS語法。
+- 熟悉了基本螢幕格式、子檔案、視窗等多種畫面設計技巧。
+- 掌握了COBOL螢幕程式與顯示檔案的互動流程與資料驗證。
+- 學會了常見的錯誤處理、訊息顯示與功能鍵控制。
+- 透過實例練習，能夠設計專業級的查詢與維護螢幕程式。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL螢幕程式，能夠查詢並分頁顯示多筆員工資料（子檔案應用）。
+2. 修改員工維護程式，新增員工時自動檢查員工編號是否重複，並顯示適當錯誤訊息。
+3. 嘗試設計一個彈出式視窗（Window Format），用於顯示說明或錯誤訊息。
+
+---

@@ -774,4 +774,118 @@ PERFORM敘述是COBOL中實現程式模組化和迴圈控制的重要工具：
       *    常數定義
        01  WS-CONSTANTS.
            05  WS-MAX-STUDENTS     PIC 99 VALUE 30.
-           05  WS-SUBJECT-COUNT    PIC 9 VALUE 5
+           05  WS-SUBJECT-COUNT    PIC 9 VALUE 5.
+       
+      *    學生成績資料
+       01  WS-STUDENT-TABLE.
+           05  WS-STUDENT OCCURS 30 TIMES.
+               10  WS-NAME         PIC X(10).
+               10  WS-SCORES       PIC 999 OCCURS 5 TIMES.
+               10  WS-AVG          PIC 999V99.
+       
+      *    統計用變數
+       01  WS-TOTAL-SUM           PIC 9(6)V99 VALUE 0.
+       01  WS-CLASS-AVG           PIC 999V99 VALUE 0.
+       01  WS-GRADE-COUNT.
+           05  WS-A-COUNT         PIC 99 VALUE 0.
+           05  WS-B-COUNT         PIC 99 VALUE 0.
+           05  WS-C-COUNT         PIC 99 VALUE 0.
+           05  WS-D-COUNT         PIC 99 VALUE 0.
+           05  WS-F-COUNT         PIC 99 VALUE 0.
+       01  WS-HIGHEST             PIC 999 VALUE 0.
+       01  WS-LOWEST              PIC 999 VALUE 100.
+       01  WS-TEMP-SCORE          PIC 999.
+       01  WS-I                   PIC 99 VALUE 1.
+       01  WS-J                   PIC 9 VALUE 1.
+       01  WS-STUDENT-COUNT       PIC 99 VALUE 0.
+       
+       PROCEDURE DIVISION.
+       MAIN-LOGIC.
+           DISPLAY '請輸入學生人數(最多30): '.
+           ACCEPT WS-STUDENT-COUNT.
+           
+           PERFORM INPUT-STUDENT-DATA VARYING WS-I FROM 1 BY 1 UNTIL WS-I > WS-STUDENT-COUNT.
+           PERFORM CALCULATE-AVERAGES.
+           PERFORM STATISTICS.
+           PERFORM DISPLAY-RESULTS.
+           STOP RUN.
+       
+       INPUT-STUDENT-DATA.
+           DISPLAY '學生' WS-I '姓名: '.
+           ACCEPT WS-NAME(WS-I).
+           PERFORM INPUT-SCORES VARYING WS-J FROM 1 BY 1 UNTIL WS-J > WS-SUBJECT-COUNT.
+       
+       INPUT-SCORES.
+           DISPLAY '第' WS-J '科成績: '.
+           ACCEPT WS-SCORES(WS-I, WS-J).
+       
+       CALCULATE-AVERAGES.
+           MOVE 1 TO WS-I.
+           PERFORM UNTIL WS-I > WS-STUDENT-COUNT
+               MOVE 0 TO WS-TEMP-SCORE
+               MOVE 1 TO WS-J
+               PERFORM UNTIL WS-J > WS-SUBJECT-COUNT
+                   ADD WS-SCORES(WS-I, WS-J) TO WS-TEMP-SCORE
+                   ADD 1 TO WS-J
+               END-PERFORM
+               COMPUTE WS-AVG(WS-I) = WS-TEMP-SCORE / WS-SUBJECT-COUNT
+               ADD WS-AVG(WS-I) TO WS-TOTAL-SUM
+               ADD 1 TO WS-I
+           END-PERFORM
+           COMPUTE WS-CLASS-AVG = WS-TOTAL-SUM / WS-STUDENT-COUNT.
+       
+       STATISTICS.
+           MOVE 1 TO WS-I.
+           PERFORM UNTIL WS-I > WS-STUDENT-COUNT
+               IF WS-AVG(WS-I) >= 90
+                   ADD 1 TO WS-A-COUNT
+               ELSE IF WS-AVG(WS-I) >= 80
+                   ADD 1 TO WS-B-COUNT
+               ELSE IF WS-AVG(WS-I) >= 70
+                   ADD 1 TO WS-C-COUNT
+               ELSE IF WS-AVG(WS-I) >= 60
+                   ADD 1 TO WS-D-COUNT
+               ELSE
+                   ADD 1 TO WS-F-COUNT
+               END-IF
+               IF WS-AVG(WS-I) > WS-HIGHEST
+                   MOVE WS-AVG(WS-I) TO WS-HIGHEST
+               END-IF
+               IF WS-AVG(WS-I) < WS-LOWEST
+                   MOVE WS-AVG(WS-I) TO WS-LOWEST
+               END-IF
+               ADD 1 TO WS-I
+           END-PERFORM.
+       
+       DISPLAY-RESULTS.
+           DISPLAY '--- 成績統計報表 ---'.
+           DISPLAY '全班平均: ' WS-CLASS-AVG.
+           DISPLAY 'A級人數(90~100): ' WS-A-COUNT.
+           DISPLAY 'B級人數(80~89): ' WS-B-COUNT.
+           DISPLAY 'C級人數(70~79): ' WS-C-COUNT.
+           DISPLAY 'D級人數(60~69): ' WS-D-COUNT.
+           DISPLAY 'F級人數(0~59): ' WS-F-COUNT.
+           DISPLAY '最高平均分: ' WS-HIGHEST.
+           DISPLAY '最低平均分: ' WS-LOWEST.
+           DISPLAY '-------------------'.
+```
+
+---
+
+## 📝 本週小結
+
+- 本週學習了COBOL的流程控制語法，包括IF-ELSE、EVALUATE、PERFORM等結構。
+- 熟悉了條件判斷、邏輯運算、巢狀結構與多重選擇的寫法。
+- 掌握了各種迴圈控制方式，能夠設計重複性與條件性流程。
+- 學會了程式模組化設計，提升程式的可讀性與維護性。
+- 透過實例練習，能夠將所學應用於實際問題解決。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL程式，輸入10位員工的工號與薪資，計算平均薪資並找出最高與最低薪資。
+2. 修改「學生成績管理系統」，增加每科最高分與最低分的統計功能。
+3. 嘗試將IF-ELSE巢狀結構改寫為EVALUATE結構，提升程式可讀性。
+
+---

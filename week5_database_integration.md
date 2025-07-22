@@ -756,4 +756,39 @@ WHERE STATUS = 'R'
            
        UPDATE-CURRENT-RECORD.
            EXEC SQL
-               UPDATE LIBRARY/
+               UPDATE LIBRARY/EMPLOYEES
+               SET SALARY = :WS-NEW-SALARY,
+                   UPDATED_BY = USER,
+                   UPDATED_TS = CURRENT TIMESTAMP
+               WHERE CURRENT OF SALARY_UPDATE_CURSOR
+           END-EXEC.
+           IF SQLCODE = 0
+               ADD 1 TO WS-UPDATED-COUNT
+           ELSE
+               PERFORM CHECK-SQL-STATUS
+           END-IF.
+
+       CLOSE-UPDATE-CURSOR.
+           EXEC SQL
+               CLOSE SALARY_UPDATE_CURSOR
+           END-EXEC.
+
+---
+
+## 📝 本週小結
+
+- 本週學習了DB2/400資料庫架構、物件階層與SQL語法（DDL、DML、索引、約束等）。
+- 熟悉了AS/400環境下的Embedded SQL語法，能夠在COBOL程式中進行查詢、新增、更新與刪除。
+- 掌握了游標的定義、開啟、讀取、關閉與可更新游標的應用。
+- 學會了資料庫錯誤處理與交易控制（COMMIT/ROLLBACK）。
+- 透過實例練習，能夠設計複雜的資料查詢與批次處理邏輯。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL+Embedded SQL程式，能夠查詢指定部門所有在職員工，並顯示其平均薪資。
+2. 修改可更新游標範例，讓薪資調整比例可由使用者輸入，並記錄調整前後的薪資差異。
+3. 嘗試設計一個批次程式，將所有離職員工的狀態自動更新為'R'，並記錄異動時間。
+
+---

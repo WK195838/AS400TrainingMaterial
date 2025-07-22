@@ -601,4 +601,45 @@ AS/400 專案開發生命週期：
            
            DISPLAY 'Feature changes committed.'.
            
-       MERGE-FEATURE-TO-DEVELOP
+       MERGE-FEATURE-TO-DEVELOP.
+           DISPLAY 'Merging feature branch to develop...'.
+           DISPLAY 'Resolving conflicts (if any)...'.
+           DISPLAY 'Merge completed: feature/salary-calc -> develop'.
+
+       MERGE-DEVELOP-TO-MAIN.
+           DISPLAY 'Merging develop branch to main...'.
+           DISPLAY 'Running integration tests...'.
+           DISPLAY 'All tests passed. Merge completed: develop -> main'.
+
+       GENERATE-VERSION-REPORT.
+           DISPLAY ' '.
+           DISPLAY '========== Version Control Report =========='.
+           DISPLAY 'Project: ' WS-PROJECT-NAME.
+           DISPLAY 'Current Version: ' WS-VERSION-STRING.
+           DISPLAY 'Current Branch: ' WS-CURRENT-BRANCH.
+           DISPLAY 'Recent Changes:'.
+           DISPLAY '  Change ID: ' WS-CHANGE-ID.
+           DISPLAY '  Type: ' WS-CHANGE-TYPE.
+           DISPLAY '  Author: ' WS-CHANGE-AUTHOR.
+           DISPLAY '  Description: ' WS-CHANGE-DESC.
+           DISPLAY '==========================================='.
+
+---
+
+## 📝 本週小結
+
+- 本週學習了AS/400專案開發生命週期、需求分析、系統設計與文件標準。
+- 熟悉了版本控制、分支管理、合併與變更追蹤的實務流程。
+- 掌握了技術文件、使用者文件的撰寫與維護技巧。
+- 學會了測試策略、品質保證與持續整合的專案管理方法。
+- 透過實例練習，能夠建立可維護、可擴展的專案架構。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一份完整的系統需求規格書（SRS），針對你熟悉的業務流程。
+2. 修改版本控制範例，模擬多位開發者在不同分支上協作並合併。
+3. 嘗試設計一個自動化測試與持續整合（CI）流程，並撰寫相關技術文件。
+
+---

@@ -718,4 +718,31 @@ DDS記錄格式：
                    PERFORM DISPLAY-EMPLOYEE-INFO
            END-READ.
            
-       DISPLAY-
+       DISPLAY-EMPLOYEE-INFO.
+           DISPLAY '員工編號: ' EMP-ID.
+           DISPLAY '姓名: ' EMP-NAME.
+           DISPLAY '部門: ' EMP-DEPT.
+           DISPLAY '職位: ' EMP-POSITION.
+           DISPLAY '月薪: ' EMP-SALARY.
+           DISPLAY '到職日期: ' EMP-HIRE-DATE.
+           DISPLAY '狀態: ' EMP-STATUS.
+
+---
+
+## 📝 本週小結
+
+- 本週學習了AS/400檔案系統的架構與檔案類型（實體檔案、邏輯檔案、來源檔案、印表檔案）。
+- 熟悉了DDS語法，能夠定義實體檔案與邏輯檔案結構。
+- 掌握了COBOL中檔案的定義、開啟、關閉、狀態處理與錯誤處理。
+- 學會了循序檔案的讀取、寫入與條件篩選，並能進行隨機存取。
+- 透過實例練習，能夠設計基本的檔案存取與查詢系統。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL程式，能夠新增、查詢、修改與刪除員工資料（CRUD操作）。
+2. 修改循序讀取範例，增加統計每個部門平均薪資的功能。
+3. 嘗試設計一個邏輯檔案，僅顯示薪資高於50000的員工，並以部門排序。
+
+---

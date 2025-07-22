@@ -645,4 +645,55 @@ AS/400 效能分析層次架構：
        TEST-BATCH-AGGREGATION.
            DISPLAY 'Testing batch aggregation...'.
            
-           MOVE FUNCTION CURRENT-DATE TO WS-START-
+           MOVE FUNCTION CURRENT-DATE TO WS-START-TIME.
+
+      *    批次處理（假設可用SIMD或批次API）
+           MOVE 0 TO WS-TOTAL-SALARY.
+           PERFORM VARYING WS-EMP-IDX FROM 1 BY 1000
+                   UNTIL WS-EMP-IDX > WS-RECORD-COUNT
+               PERFORM VARYING WS-OFFSET FROM 0 BY 1 UNTIL WS-OFFSET > 999
+                   ADD WS-EMP-SALARY(WS-EMP-IDX + WS-OFFSET) TO WS-TOTAL-SALARY
+               END-PERFORM
+           END-PERFORM.
+
+           MOVE FUNCTION CURRENT-DATE TO WS-END-TIME.
+           COMPUTE WS-OPTIMIZED-TIME = WS-END-TIME - WS-START-TIME.
+
+           DISPLAY 'Batch aggregation: ' WS-OPTIMIZED-TIME ' ms'.
+           DISPLAY 'Total salary: ' WS-TOTAL-SALARY.
+
+       COMPARE-AGGREGATION-RESULTS.
+           COMPUTE WS-IMPROVEMENT = 
+               ((WS-NAIVE-TIME - WS-OPTIMIZED-TIME) / WS-NAIVE-TIME) * 100.
+           DISPLAY 'Aggregation Optimization Results:'
+           DISPLAY '  Simple: ' WS-NAIVE-TIME ' ms.'
+           DISPLAY '  Batch: ' WS-OPTIMIZED-TIME ' ms.'
+           DISPLAY '  Improvement: ' WS-IMPROVEMENT '%'.
+
+       DEMONSTRATE-MEMORY-OPTIMIZATION.
+           DISPLAY ' '.
+           DISPLAY '=== Memory Usage Optimization ==='.
+           DISPLAY '1. 使用OCCURS ... DEPENDING ON動態陣列'.
+           DISPLAY '2. 釋放不再使用的暫存區'.
+           DISPLAY '3. 減少大型區段的複製與傳遞'.
+           DISPLAY '4. 善用指標與區塊存取'.
+
+---
+
+## 📝 本週小結
+
+- 本週學習了AS/400效能分析架構、指標與系統監控工具的應用。
+- 熟悉了程式碼層級的優化技巧，包括搜尋、排序、聚合與記憶體管理。
+- 掌握了資料存取、索引設計與I/O優化的實務方法。
+- 學會了效能監控、異常偵測與自動化報告產生。
+- 透過實例練習，能夠設計高效、可擴展的企業級應用程式。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL程式，能夠自動監控指定檔案或資料表的I/O效能，並產生趨勢報告。
+2. 修改演算法優化範例，實作多執行緒或平行處理以提升效能。
+3. 嘗試設計一個效能自動調校模組，根據監控數據自動調整程式參數。
+
+---

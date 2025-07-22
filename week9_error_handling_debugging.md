@@ -722,4 +722,71 @@
            
            EXEC SQL
                DELETE FROM LIBRARY/EMPLOYEES
-               WHERE E
+               WHERE EMP_ID = 'T00002'
+           END-EXEC.
+           PERFORM ANALYZE-SQL-RESULT.
+
+      *    刪除不存在的記錄
+           MOVE 'DELETE-NOT-FOUND' TO WS-SQL-OPERATION.
+           EXEC SQL
+               DELETE FROM LIBRARY/EMPLOYEES
+               WHERE EMP_ID = 'ZZZZZ'
+           END-EXEC.
+           PERFORM ANALYZE-SQL-RESULT.
+
+       TEST-TRANSACTION-OPERATIONS.
+           DISPLAY 'Testing transaction operations...'.
+
+      *    測試ROLLBACK
+           MOVE 'TRANSACTION-ROLLBACK' TO WS-SQL-OPERATION.
+           EXEC SQL
+               INSERT INTO LIBRARY/EMPLOYEES (
+                   EMP_ID, EMP_NAME, DEPT_CODE, SALARY, STATUS
+               ) VALUES (
+                   'T00099', '異常測試', 'IT01', 99999.99, 'A'
+               )
+           END-EXEC.
+           IF SQLCODE = 0
+               EXEC SQL
+                   ROLLBACK WORK
+               END-EXEC
+               DISPLAY 'Rollback executed.'
+           END-IF.
+           PERFORM ANALYZE-SQL-RESULT.
+
+       ANALYZE-SQL-RESULT.
+           MOVE SQLSTATE(1:2) TO WS-SQLSTATE-CLASS.
+           MOVE SQLSTATE(3:3) TO WS-SQLSTATE-SUBCLASS.
+           IF SQLCODE = 0
+               DISPLAY 'SQL執行成功: ' WS-SQL-OPERATION
+           ELSE IF SQLCODE > 0
+               DISPLAY 'SQL警告: ' WS-SQL-OPERATION ' SQLCODE=' SQLCODE ' SQLSTATE=' SQLSTATE
+           ELSE
+               DISPLAY 'SQL錯誤: ' WS-SQL-OPERATION ' SQLCODE=' SQLCODE ' SQLSTATE=' SQLSTATE
+               IF SQLCODE < -70000
+                   DISPLAY '嚴重錯誤，建議立即檢查系統日誌'
+               END-IF
+           END-IF.
+
+       FINALIZE-SQL-OPERATIONS.
+           DISPLAY 'SQL錯誤處理示範結束。'.
+
+---
+
+## 📝 本週小結
+
+- 本週學習了AS/400系統的多層次錯誤處理機制與異常管理策略。
+- 熟悉了檔案操作、SQL操作的完整錯誤處理與日誌記錄技巧。
+- 掌握了STRDBG除錯器的基本與進階用法，能有效追蹤與修正程式錯誤。
+- 學會了設計健全的復原機制與事後監控報告。
+- 透過實例練習，能夠開發高品質、可維護的專業程式碼。
+
+---
+
+## 📌 課後練習
+
+1. 請設計一個COBOL程式，能夠自動記錄所有檔案操作錯誤並產生錯誤報表。
+2. 修改SQL錯誤處理範例，加入自動重試與異常通知機制。
+3. 嘗試使用STRDBG除錯器，逐步追蹤一個複雜的業務邏輯錯誤，並記錄除錯過程。
+
+---
