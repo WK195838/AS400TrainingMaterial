@@ -882,5 +882,112 @@ namespace OtherCollections
         {
             Console.WriteLine("=== HashSet<T> - 唯一值集合 ===");
             HashSetExamples();
-            
-            Console.WriteLine("\n
+
+            Console.WriteLine("\n=== Queue<T> - 先進先出佇列 ===");
+            QueueExamples();
+
+            Console.WriteLine("\n=== Stack<T> - 後進先出堆疊 ===");
+            StackExamples();
+
+            Console.WriteLine("\n=== SortedSet<T> - 排序唯一集合 ===");
+            SortedSetExamples();
+
+            Console.WriteLine("\n=== ConcurrentQueue<T> - 執行緒安全佇列 ===");
+            ConcurrentQueueExamples();
+        }
+
+        static void HashSetExamples()
+        {
+            var set = new HashSet<string> { "apple", "banana", "cherry" };
+            set.Add("banana"); // 不會重複
+            set.Add("date");
+            Console.WriteLine($"HashSet內容: [{string.Join(", ", set)}]");
+            Console.WriteLine($"包含banana? {set.Contains("banana")}");
+            set.Remove("apple");
+            Console.WriteLine($"移除apple後: [{string.Join(", ", set)}]");
+        }
+
+        static void QueueExamples()
+        {
+            var queue = new Queue<int>();
+            queue.Enqueue(1);
+            queue.Enqueue(2);
+            queue.Enqueue(3);
+            Console.WriteLine($"Queue內容: [{string.Join(", ", queue)}]");
+            Console.WriteLine($"Dequeue: {queue.Dequeue()}");
+            Console.WriteLine($"Peek: {queue.Peek()}");
+            Console.WriteLine($"Queue剩餘: [{string.Join(", ", queue)}]");
+        }
+
+        static void StackExamples()
+        {
+            var stack = new Stack<string>();
+            stack.Push("A");
+            stack.Push("B");
+            stack.Push("C");
+            Console.WriteLine($"Stack內容: [{string.Join(", ", stack)}]");
+            Console.WriteLine($"Pop: {stack.Pop()}");
+            Console.WriteLine($"Peek: {stack.Peek()}");
+            Console.WriteLine($"Stack剩餘: [{string.Join(", ", stack)}]");
+        }
+
+        static void SortedSetExamples()
+        {
+            var sortedSet = new SortedSet<int> { 5, 3, 8, 1, 3 };
+            Console.WriteLine($"SortedSet內容: [{string.Join(", ", sortedSet)}]");
+            sortedSet.Add(6);
+            sortedSet.Remove(3);
+            Console.WriteLine($"更新後: [{string.Join(", ", sortedSet)}]");
+        }
+
+        static void ConcurrentQueueExamples()
+        {
+            var cq = new ConcurrentQueue<string>();
+            cq.Enqueue("X");
+            cq.Enqueue("Y");
+            cq.Enqueue("Z");
+            if (cq.TryDequeue(out var result))
+                Console.WriteLine($"ConcurrentQueue Dequeue: {result}");
+            Console.WriteLine($"剩餘: [{string.Join(", ", cq)}]");
+        }
+    }
+}
+```
+
+**常見集合類型比較：**
+
+| 類型                | 特性                     | 適用情境                     |
+|---------------------|--------------------------|------------------------------|
+| List<T>             | 有序、可重複             | 一般清單、索引存取           |
+| Dictionary<TKey,TValue> | 鍵值對、快速查詢     | 需要依Key查詢、映射           |
+| HashSet<T>          | 唯一、無序               | 去除重複、集合運算           |
+| Queue<T>            | 先進先出                 | 排隊、任務處理               |
+| Stack<T>            | 後進先出                 | 邏輯堆疊、回溯               |
+| SortedSet<T>        | 唯一、自動排序           | 唯一且需排序的集合           |
+| ConcurrentQueue<T>  | 執行緒安全FIFO           | 多執行緒任務排程             |
+
+---
+
+## 📖 第三節：LINQ查詢語法與資料處理
+
+（請於下週教材深入學習LINQ語法與應用）
+
+---
+
+## 📝 本週總結與學習建議
+
+本週我們深入探討了C#泛型、集合類型與其應用，重點如下：
+
+1. **泛型程式設計**：提升型別安全、效能與程式碼重用性。
+2. **各類集合**：根據需求選擇合適的集合型別，提升資料處理效率。
+3. **集合操作技巧**：熟悉常用API與效能考量。
+
+**學習建議：**
+- 多練習各種集合的宣告、操作與遍歷。
+- 嘗試設計小型資料結構應用（如：學生名單、商品庫存、任務排程）。
+- 比較不同集合在查詢、插入、刪除上的效能差異。
+- 預習LINQ語法，為下週資料查詢與轉換做準備。
+
+---
+
+*本教材版權所有，僅供學習使用。如有疑問，請聯繫課程講師。*

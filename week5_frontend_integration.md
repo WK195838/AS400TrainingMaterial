@@ -548,4 +548,145 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h5>會員專區</h5>
                     <ul class="list-unstyled">
-                        <li><a href="/account/
+                        <li><a href="/account/profile" class="text-muted">個人資料</a></li>
+                        <li><a href="/account/orders" class="text-muted">訂單查詢</a></li>
+                        <li><a href="/account/wishlist" class="text-muted">我的收藏</a></li>
+                        <li><a href="/account/login" class="text-muted">登入/註冊</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>聯絡資訊</h5>
+                    <ul class="list-unstyled">
+                        <li><span class="text-muted">客服專線：0800-123-456</span></li>
+                        <li><span class="text-muted">Email：service@example.com</span></li>
+                        <li><span class="text-muted">地址：台北市信義區市民大道100號</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <small class="text-secondary">&copy; 2024 ECommerce 電商平台. 版權所有.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript & Bootstrap -->
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="https://kit.fontawesome.com/xxxxxxx.js" crossorigin="anonymous"></script>
+</body>
+</html>
+```
+
+---
+
+## ⚡ 第二節：JavaScript ES6+與互動開發
+
+### 2.1 ES6+語法重點
+- let/const、箭頭函式、解構賦值、展開運算子、模板字串
+- Array方法：map、filter、reduce、find、some、every
+- 模組化import/export
+
+**範例：**
+```js
+// 箭頭函式與解構
+const products = [
+  { name: "手機", price: 32900 },
+  { name: "平板", price: 19900 }
+];
+const names = products.map(({ name }) => name);
+
+// 展開運算子
+const all = [...products, { name: "耳機", price: 2990 }];
+
+// 模板字串
+const info = `共${products.length}項商品`;
+```
+
+### 2.2 DOM操作與事件
+- 取得元素：`document.querySelector`、`getElementById`
+- 綁定事件：`addEventListener`
+- 動態產生內容、切換class
+
+**範例：**
+```js
+// 切換主圖
+const thumbnails = document.querySelectorAll('.thumbnail-image');
+const mainImage = document.getElementById('main-product-image');
+thumbnails.forEach(img => {
+  img.addEventListener('click', function() {
+    thumbnails.forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    mainImage.src = this.dataset.mainImage;
+  });
+});
+```
+
+---
+
+## 🎨 第三節：Bootstrap與響應式設計
+
+- Bootstrap網格系統（row/col）、斷點、排版工具
+- 常用元件：按鈕、表單、Modal、Alert、Card
+- 客製化主題與SCSS
+
+**範例：**
+```html
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card h-100">
+      <img src="/images/products/1.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">產品名稱</h5>
+        <p class="card-text">產品描述...</p>
+        <a href="#" class="btn btn-primary">加入購物車</a>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+---
+
+## 🔄 第四節：Ajax、Fetch API與前後端整合
+
+- Fetch API語法、Promise、async/await
+- 取得/送出JSON資料、錯誤處理
+- 與後端API串接（如產品評論、購物車）
+
+**範例：**
+```js
+// 載入更多評論
+const loadMoreBtn = document.getElementById('load-more-reviews');
+let page = 1;
+loadMoreBtn.addEventListener('click', async () => {
+  page++;
+  const res = await fetch(`/api/reviews?productId=123&page=${page}`);
+  const data = await res.json();
+  // 動態渲染評論...
+});
+```
+
+---
+
+## 🛠️ 第五節：前端工具鏈與開發流程
+
+- npm/yarn套件管理、Webpack/Vite打包、Sass/SCSS預處理
+- 開發/生產環境切換、Linter/Formatter
+- 前端自動化測試（Jest、Cypress）
+
+---
+
+## 📝 本週總結與學習建議
+
+本週我們學習了HTML5/CSS3語義化、JavaScript ES6+、Bootstrap、Ajax/Fetch、前端工具鏈等現代前端技術。
+
+**學習建議：**
+- 多練習撰寫語義化HTML與響應式版型
+- 嘗試用JS操作DOM與串接API
+- 練習Bootstrap元件與自訂樣式
+- 熟悉npm、打包工具與自動化測試
+- 預習前端框架（如Vue/React）
+
+---
+
+*本教材版權所有，僅供學習使用。如有疑問，請聯繫課程講師。*

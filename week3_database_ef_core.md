@@ -829,4 +829,216 @@ namespace ECommerceApp.Models
         public string AddressLine2 { get; set; }
         
         [MaxLength(50)]
-        
+        public string City { get; set; }
+        [MaxLength(50)]
+        public string StateProvince { get; set; }
+        [MaxLength(20)]
+        public string PostalCode { get; set; }
+        [MaxLength(50)]
+        public string Country { get; set; } = "Taiwan";
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        [MaxLength(50)]
+        public string CreatedBy { get; set; }
+        [MaxLength(50)]
+        public string UpdatedBy { get; set; }
+        // 導覽屬性
+        public ICollection<Order> Orders { get; set; }
+    }
+
+    public class Category
+    {
+        public int CategoryId { get; set; }
+        [Required, MaxLength(100)]
+        public string CategoryName { get; set; }
+        public string Description { get; set; }
+        public int? ParentCategoryId { get; set; }
+        public bool IsActive { get; set; } = true;
+        public int DisplayOrder { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        // 導覽屬性
+        public Category ParentCategory { get; set; }
+        public ICollection<Category> SubCategories { get; set; }
+        public ICollection<Product> Products { get; set; }
+    }
+
+    public class Product
+    {
+        public int ProductId { get; set; }
+        [Required, MaxLength(200)]
+        public string ProductName { get; set; }
+        [Required, MaxLength(50)]
+        public string ProductCode { get; set; }
+        public string Description { get; set; }
+        public int CategoryId { get; set; }
+        public decimal UnitPrice { get; set; }
+        public int StockQuantity { get; set; }
+        public bool IsActive { get; set; } = true;
+        public bool IsDiscontinued { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        // 導覽屬性
+        public Category Category { get; set; }
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+    }
+
+    public class Order
+    {
+        public int OrderId { get; set; }
+        [Required, MaxLength(50)]
+        public string OrderNumber { get; set; }
+        public int CustomerId { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+        public decimal SubTotal { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal ShippingCost { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public string OrderStatus { get; set; } = "Pending";
+        public string PaymentStatus { get; set; } = "Pending";
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        // 導覽屬性
+        public Customer Customer { get; set; }
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+    }
+
+    public class OrderDetail
+    {
+        public int OrderDetailId { get; set; }
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Discount { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        // 導覽屬性
+        public Order Order { get; set; }
+        public Product Product { get; set; }
+    }
+
+    // 2. DbContext
+    public class ECommerceDbContext : DbContext
+    {
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // 實際專案請用appsettings.json管理連線字串
+            optionsBuilder.UseSqlServer("Server=.;Database=ECommerceDb;Trusted_Connection=True;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Fluent API 設定（可選）
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.SubCategories)
+                .WithOne(c => c.ParentCategory)
+                .HasForeignKey(c => c.ParentCategoryId);
+            modelBuilder.Entity<Product>()
+                .HasIndex(p => p.ProductCode)
+                .IsUnique();
+            modelBuilder.Entity<Order>()
+                .HasIndex(o => o.OrderNumber)
+                .IsUnique();
+        }
+    }
+}
+```
+
+#### 2.1.2 Code First 與資料庫遷移
+
+- **Code First**：先撰寫C#類別，再由EF Core自動產生資料庫結構。
+- **資料庫遷移（Migration）**：追蹤模型變更，自動同步資料庫。
+
+**常用指令：**
+```bash
+# 安裝EF Core CLI（僅需一次）
+dotnet tool install --global dotnet-ef
+
+# 新增遷移
+ dotnet ef migrations add InitialCreate
+
+# 更新資料庫
+ dotnet ef database update
+```
+
+#### 2.1.3 基本CRUD操作
+
+```csharp
+using (var db = new ECommerceDbContext())
+{
+    // 新增
+    var customer = new Customer { FirstName = "王", LastName = "小明", Email = "ming@example.com" };
+    db.Customers.Add(customer);
+    db.SaveChanges();
+
+    // 查詢
+    var customers = db.Customers.Where(c => c.IsActive).ToList();
+
+    // 更新
+    customer.LastName = "大明";
+    db.SaveChanges();
+
+    // 刪除
+    db.Customers.Remove(customer);
+    db.SaveChanges();
+}
+```
+
+#### 2.1.4 Repository 與 Unit of Work 模式簡介
+
+- **Repository Pattern**：封裝資料存取邏輯，讓業務邏輯與資料層分離。
+- **Unit of Work**：統一管理多個Repository的交易，確保資料一致性。
+
+**簡易範例：**
+```csharp
+public interface IRepository<T> where T : class
+{
+    IQueryable<T> GetAll();
+    T GetById(int id);
+    void Add(T entity);
+    void Update(T entity);
+    void Delete(T entity);
+}
+
+public class Repository<T> : IRepository<T> where T : class
+{
+    private readonly ECommerceDbContext _context;
+    public Repository(ECommerceDbContext context) { _context = context; }
+    public IQueryable<T> GetAll() => _context.Set<T>();
+    public T GetById(int id) => _context.Set<T>().Find(id);
+    public void Add(T entity) => _context.Set<T>().Add(entity);
+    public void Update(T entity) => _context.Set<T>().Update(entity);
+    public void Delete(T entity) => _context.Set<T>().Remove(entity);
+}
+
+public class UnitOfWork : IDisposable
+{
+    private readonly ECommerceDbContext _context = new();
+    public Repository<Customer> Customers => new(_context);
+    public Repository<Product> Products => new(_context);
+    public int Save() => _context.SaveChanges();
+    public void Dispose() => _context.Dispose();
+}
+```
+
+---
+
+## 📝 本週總結與學習建議
+
+本週我們學習了關聯式資料庫設計、SQL語法、ADO.NET操作，以及Entity Framework Core的Code First、遷移、基本CRUD與Repository/Unit of Work模式。
+
+**學習建議：**
+- 多練習SQL查詢與資料表設計，理解正規化與索引效能。
+- 嘗試用EF Core建立簡單專案，體驗Code First與遷移流程。
+- 練習撰寫Repository與Unit of Work，體會分層架構的好處。
+- 預習LINQ查詢與進階資料存取技巧。
+
+---
+
+*本教材版權所有，僅供學習使用。如有疑問，請聯繫課程講師。*

@@ -850,4 +850,94 @@ namespace ECommerceApp.Controllers
             if (imageFile.Length > 5 * 1024 * 1024)
             {
                 return BadRequest(new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "檔案過大，請上傳5MB以內的圖片"
+                });
+            }
+
+            try
+            {
+                var imagePath = await _productService.SaveProductImageAsync(imageFile);
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Data = imagePath,
+                    Message = "圖片上傳成功"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "圖片上傳失敗"
+                });
+            }
+        }
+    }
+}
+```
+
+---
+
+## 🖼️ 第三節：Razor View 與前端整合
+
+### 3.1 Razor語法基礎
+
+- `@{ ... }`：C#程式區塊
+- `@Model`：存取ViewModel
+- `@Html.*`：輔助方法產生表單、連結等
+- `@foreach`、`@if`：流程控制
+
+**範例：**
+```cshtml
+@model ProductIndexViewModel
+<h2>產品列表</h2>
+<ul>
+@foreach (var product in Model.Products)
+{
+    <li>@product.ProductName - @product.UnitPrice.ToString("C")</li>
+}
+</ul>
+```
+
+### 3.2 Layout與Partial View
+
+- `_Layout.cshtml`：全站共用版型
+- `@RenderBody()`：主內容區
+- `@RenderSection()`：可選區塊
+- `Partial View`：重複區塊（如產品卡片、表單）
+
+---
+
+## ✅ 第四節：資料驗證與錯誤處理
+
+- ModelState驗證、DataAnnotations屬性
+- 自訂驗證屬性與伺服器端/用戶端驗證
+- 全域例外處理（Exception Filter）、自訂錯誤頁
+
+---
+
+## 🧩 第五節：依賴注入與中介軟體
+
+- 依賴注入（DI）設計模式，提升可維護性與測試性
+- 服務註冊（AddScoped/AddSingleton/AddTransient）
+- 中介軟體（Middleware）請求管線設計
+
+---
+
+## 📝 本週總結與學習建議
+
+本週我們學習了ASP.NET Core MVC的架構、Controller/Action設計、Razor View、資料驗證、依賴注入與中介軟體。
+
+**學習建議：**
+- 多練習建立Controller與View，體驗MVC流程
+- 嘗試自訂驗證屬性與錯誤處理
+- 練習使用依賴注入與服務註冊
+- 預習ASP.NET Core身份驗證與授權
+
+---
+
+*本教材版權所有，僅供學習使用。如有疑問，請聯繫課程講師。*
                 
